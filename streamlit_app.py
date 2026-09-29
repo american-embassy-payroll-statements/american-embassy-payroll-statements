@@ -15,9 +15,20 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Custom CSS Styling
+# 2. Custom CSS Styling (Includes rules to hide Header, Footer, and Streamlit Badges)
 st.markdown("""
     <style>
+    /* Hide Streamlit Header, Footer, and Toolbar elements */
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+    [data-testid="stHeader"] {display: none;}
+    [data-testid="stToolbar"] {display: none;}
+    [data-testid="stDecoration"] {display: none;}
+    [data-testid="stStatusWidget"] {display: none;}
+    .viewerBadge_container__1613n {display: none !important;}
+    .viewerBadge_link__1S137 {display: none !important;}
+    
     :root {
         --embassy-navy: #0B2238;
         --embassy-red: #A61C1E;
@@ -92,7 +103,7 @@ st.markdown("""
 
 # 4. Sidebar Credentials Setup
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/2/27/Great_Seal_of_the_United_States_%28Blazon%29.svg", width=100)
+    st.image("https://upload.wikimedia.org/wikipedia/commons/2/27/Great_Seal_of_the_United_States_%20%28Blazon%29.svg", width=100)
     st.title("Authentication")
     st.caption("Enter official credentials to enable SMTP dispatch.")
      
