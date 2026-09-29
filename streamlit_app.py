@@ -60,13 +60,15 @@ st.markdown("""
         font-weight: 500;
     }
     
-    /* Strict Navy Titles for Web & Mobile */
+    /* Prominent Navy Titles for Web & Mobile */
     .navy-title {
         color: #0B2238 !important;
-        font-size: 20px !important;
-        font-weight: 700 !important;
-        margin-bottom: 12px !important;
+        font-size: 24px !important;
+        font-weight: 800 !important;
+        margin-top: 10px !important;
+        margin-bottom: 16px !important;
         display: block !important;
+        letter-spacing: 0.5px !important;
     }
      
     [data-testid="stSidebar"] {
@@ -139,15 +141,15 @@ with st.sidebar:
     4. Click Start Dispatch.
     """)
 
-# 5. Main Content Area (Navy Titles)
+# 5. Main Content Area (Enlarged Navy Titles)
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown('<p class="navy-title">1. Master Payroll PDF</p>', unsafe_allow_html=True)
+    st.markdown('<div class="navy-title">1. Master Payroll PDF</div>', unsafe_allow_html=True)
     uploaded_pdf = st.file_uploader("Upload multi-page Payroll PDF", type=["pdf"])
 
 with col2:
-    st.markdown('<p class="navy-title">2. Employee Mapping Sheet</p>', unsafe_allow_html=True)
+    st.markdown('<div class="navy-title">2. Employee Mapping Sheet</div>', unsafe_allow_html=True)
     uploaded_mapping = st.file_uploader("Upload Excel or CSV mapping file", type=["xlsx", "csv"])
 
 st.markdown("---")
