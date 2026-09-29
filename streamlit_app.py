@@ -85,6 +85,32 @@ st.markdown("""
         margin-bottom: 12px !important;  
         letter-spacing: 0.5px !important;  
     }  
+
+    /* Navy Background for File Uploader Box */
+    [data-testid="stFileUploader"] {
+        background-color: #0B2238 !important;
+        border-radius: 10px !important;
+        padding: 15px !important;
+        border: 2px dashed #C5A059 !important;
+    }
+
+    [data-testid="stFileUploader"] section {
+        background-color: #0B2238 !important;
+    }
+
+    [data-testid="stFileUploader"] label,
+    [data-testid="stFileUploader"] p,
+    [data-testid="stFileUploader"] span,
+    [data-testid="stFileUploader"] div {
+        color: #FFFFFF !important;
+    }
+
+    [data-testid="stFileUploader"] button {
+        background-color: #C5A059 !important;
+        color: #0B2238 !important;
+        font-weight: 700 !important;
+        border: none !important;
+    }
          
     .stButton>button {  
         background-color: #A61C1E !important;  
