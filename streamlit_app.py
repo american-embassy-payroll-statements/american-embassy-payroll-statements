@@ -9,39 +9,42 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText  
 from email.mime.application import MIMEApplication
 
-# 1. Page Configuration
 st.set_page_config(  
     page_title="U.S. Embassy Cairo - Payroll Dispatcher",  
     layout="wide",  
     initial_sidebar_state="expanded"  
 )
 
-# Function to validate email format
 def is_valid_email(email):
     pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
     return re.match(pattern, str(email).strip()) is not None
 
-# 2. Custom CSS Styling
 st.markdown("""  
     <style>  
     #MainMenu {visibility: hidden !important;}  
     footer {visibility: hidden !important;}  
     [data-testid="stToolbar"] {visibility: hidden !important;}  
 
-    /* Prevent Sidebar from collapsing & hide collapse arrow */
-    [data-testid="stSidebarCollapseButton"],
-    button[aria-label="Collapse sidebar"] {
+    header[data-testid="stHeader"] {
         display: none !important;
     }
 
-    /* Force Sidebar to be Always Visible & Styled */
     [data-testid="stSidebar"] {  
         background-color: #0B2238 !important;  
         min-width: 320px !important;
-        display: block !important;
-        visibility: visible !important;
     }  
-       
+
+    [data-testid="stSidebarCollapsedControl"] {
+        display: flex !important;
+        visibility: visible !important;
+        position: fixed !important;
+        top: 15px !important;
+        left: 15px !important;
+        z-index: 999999 !important;
+        background-color: #C5A059 !important;
+        border-radius: 6px !important;
+    }
+
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] h3, 
@@ -55,13 +58,6 @@ st.markdown("""
         color: #C5A059 !important;
     }
 
-    :root {  
-        --embassy-navy: #0B2238;  
-        --embassy-red: #A61C1E;  
-        --embassy-gold: #C5A059;  
-        --embassy-bg: #F8F9FA;  
-    }  
-       
     .stApp {  
         background-color: #F4F6F8;  
     }  
@@ -118,7 +114,6 @@ st.markdown("""
         transform: translateY(-1px);  
     }
 
-    /* Custom Copyright Footer Bar */  
     .custom-footer {  
         position: fixed;  
         left: 0;  
@@ -137,7 +132,6 @@ st.markdown("""
     </style>  
 """, unsafe_allow_html=True)
 
-# 3. Header Section  
 st.markdown("""  
     <div class="header-box">  
         <div class="header-title">U.S. EMBASSY CAIRO</div>  
@@ -145,7 +139,6 @@ st.markdown("""
     </div>  
 """, unsafe_allow_html=True)
 
-# 4. Sidebar Credentials Setup  
 with st.sidebar:  
     st.title("Authentication")  
     st.caption("Enter official credentials to enable SMTP dispatch.")  
@@ -162,7 +155,6 @@ with st.sidebar:
     4. Click Start Dispatch.  
     """)
 
-# 5. Main Content Area  
 col1, col2 = st.columns(2)
 
 with col1:  
@@ -175,7 +167,6 @@ with col2:
 
 st.markdown("---")
 
-# 6. Dispatch Processing Logic  
 if st.button("Start Payroll Dispatch Process", type="primary"):  
     if not sender_email or not app_password:  
         st.error("Please provide both Sender Email and Google App Password in the sidebar.")  
@@ -209,7 +200,6 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
             for _, row in mapping_df.iterrows():  
                 val = row[ref_key]  
                 if pd.notna(val):  
-                    # Preserving leading zeros and formatting cleanly
                     ref_val = str(val).strip().split('.')[0]
                     email_val = str(row[email_key]).strip() if pd.notna(row[email_key]) else ""  
                     emp_name = str(row[name_key]).strip() if name_key and pd.notna(row[name_key]) else "Employee"  
@@ -219,7 +209,6 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
             pdf_bytes = uploaded_pdf.read()  
             reader = PdfReader(io.BytesIO(pdf_bytes))  
                
-            # Establish SMTP Connection
             server = smtplib.SMTP('smtp.gmail.com', 587)  
             server.starttls()  
             server.login(sender_email.strip(), app_password.strip())  
@@ -239,7 +228,6 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                     matched_ref = None  
                     matched_data = None  
                        
-                    # Strict Regex Exact Boundary Match
                     for ref_num, data in mapping_dict.items():  
                         pattern = rf'\b{re.escape(ref_num)}\b'
                         if re.search(pattern, extracted_text):  
@@ -255,7 +243,6 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                     recipient_email = matched_data["email"]  
                     emp_name = matched_data["name"]  
 
-                    # Check for Email Validity
                     if not is_valid_email(recipient_email):
                         st.error(f"Page {index + 1}: Invalid email address format ({recipient_email}) for {emp_name}.")
                         failed_count += 1
@@ -307,7 +294,6 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                 except Exception:  
                     pass
 
-# 7. Copyright Footer Bar  
 st.markdown("""  
     <div class="custom-footer">  
        © 2026 American Embassy Payroll Statements. All Rights Reserved. Confidential & Internal Use Only.  
