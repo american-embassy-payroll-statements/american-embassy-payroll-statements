@@ -200,7 +200,7 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
             for _, row in mapping_df.iterrows():  
                 val = row[ref_key]  
                 if pd.notna(val):  
-                    ref_val = str(val).strip().split('.')[0]
+                    ref_val = str(val).strip().split('.')[0]  
                     email_val = str(row[email_key]).strip() if pd.notna(row[email_key]) else ""  
                     emp_name = str(row[name_key]).strip() if name_key and pd.notna(row[name_key]) else "Employee"  
                     if ref_val:  
@@ -225,11 +225,17 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                 for index, page in enumerate(pdf.pages):  
                     extracted_text = page.extract_text() or ""  
                        
+                    if not extracted_text.strip():  
+                        st.warning(f"Page {index + 1}: No readable text found (Scanned Image PDF).")  
+                        failed_count += 1  
+                        progress_bar.progress((index + 1) / total_pages)  
+                        continue  
+                       
                     matched_ref = None  
                     matched_data = None  
                        
                     for ref_num, data in mapping_dict.items():  
-                        pattern = rf'\b{re.escape(ref_num)}\b'
+                        pattern = rf'\b{re.escape(ref_num)}\b'  
                         if re.search(pattern, extracted_text):  
                             matched_ref = ref_num  
                             matched_data = data  
@@ -238,17 +244,19 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                     if not matched_ref or not matched_data or not matched_data["email"]:  
                         st.warning(f"Page {index + 1}: No matching Reference Number found.")  
                         failed_count += 1  
+                        progress_bar.progress((index + 1) / total_pages)  
                         continue  
                        
                     recipient_email = matched_data["email"]  
                     emp_name = matched_data["name"]  
 
-                    if not is_valid_email(recipient_email):
-                        st.error(f"Page {index + 1}: Invalid email address format ({recipient_email}) for {emp_name}.")
-                        failed_count += 1
-                        continue
+                    if not is_valid_email(recipient_email):  
+                        st.error(f"Page {index + 1}: Invalid email address format ({recipient_email}) for {emp_name}.")  
+                        failed_count += 1  
+                        progress_bar.progress((index + 1) / total_pages)  
+                        continue  
                        
-                    try:
+                    try:  
                         writer = PdfWriter()  
                         writer.add_page(reader.pages[index])  
                            
@@ -272,9 +280,9 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                         sent_count += 1  
                            
                         status_text.markdown(f"Page {index + 1}: Dispatched to {emp_name} ({recipient_email}) [Ref: {matched_ref}]")  
-                    except Exception as send_err:
-                        st.error(f"Page {index + 1}: Failed to send to {recipient_email}. Error: {str(send_err)}")
-                        failed_count += 1
+                    except Exception as send_err:  
+                        st.error(f"Page {index + 1}: Failed to send to {recipient_email}. Error: {str(send_err)}")  
+                        failed_count += 1  
 
                     progress_bar.progress((index + 1) / total_pages)  
                
@@ -292,7 +300,7 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                 try:  
                     server.quit()  
                 except Exception:  
-                    pass
+                    pass  
 
 st.markdown("""  
     <div class="custom-footer">  
