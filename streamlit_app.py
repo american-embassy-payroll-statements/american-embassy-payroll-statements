@@ -15,17 +15,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Custom CSS Styling (Hides 'Created By' profile icon only)
+# 2. Advanced Injection to Remove Streamlit Cloud Viewer Badge / Created By
 st.markdown("""
     <style>
-    /* Hide Main Menu & Footer */
+    /* Hide Default Header & Footer */
     #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
     footer {visibility: hidden;}
-    
-    /* Target and hide the 'Created by' user avatar badge in Streamlit Cloud */
-    [data-testid="stHeader"] a[href*="github.com"] {display: none !important;}
-    div[class*="viewerBadge"] > a:first-child {display: none !important;}
-    div[class*="stViewerBadge"] > a:first-child {display: none !important;}
+    [data-testid="stHeader"] {display: none !important;}
+    [data-testid="stToolbar"] {display: none !important;}
     
     :root {
         --embassy-navy: #0B2238;
@@ -89,6 +87,27 @@ st.markdown("""
         transform: translateY(-1px);
     }
     </style>
+
+    <script>
+    function removeCreatedBy() {
+        try {
+            // Target the floating badge container and iframe in the parent window
+            const pDoc = window.parent.document;
+            const iframes = pDoc.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                if (iframe.src.includes('share.streamlit.io') || iframe.title.includes('badge')) {
+                    iframe.remove();
+                }
+            });
+            const badges = pDoc.querySelectorAll('[class*="viewerBadge"], [class*="ViewerBadge"], [data-testid="stStatusWidget"]');
+            badges.forEach(b => b.remove());
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    // Loop to continuously ensure the injected elements are removed immediately when loaded
+    setInterval(removeCreatedBy, 300);
+    </script>
 """, unsafe_allow_html=True)
 
 # 3. Header Section
