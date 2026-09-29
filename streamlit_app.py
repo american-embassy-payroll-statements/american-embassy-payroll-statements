@@ -15,7 +15,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Custom CSS Styling (Includes strict rules to hide Header, Footer, Fork, and Streamlit Badges)
+# 2. Custom CSS Styling & JS Injection to Completely Remove Cloud Badges
 st.markdown("""
     <style>
     /* Hide Streamlit Header, Footer, Toolbar, and Floating Badges */
@@ -27,7 +27,7 @@ st.markdown("""
     [data-testid="stDecoration"] {display: none !important;}
     [data-testid="stStatusWidget"] {display: none !important;}
     
-    /* Hide Streamlit Cloud viewer badge and bottom-right icons */
+    /* Target viewer badge containers */
     div[class*="viewerBadge"] {display: none !important;}
     div[class*="stAppDeployButton"] {display: none !important;}
     a[class*="viewerBadge"] {display: none !important;}
@@ -97,6 +97,14 @@ st.markdown("""
         transform: translateY(-1px);
     }
     </style>
+
+    <script>
+    function removeBadges() {
+        const badges = window.parent.document.querySelectorAll('div[class*="viewerBadge"], a[class*="viewerBadge"], iframe[title="streamlit_badge"]');
+        badges.forEach(b => b.remove());
+    }
+    setInterval(removeBadges, 500);
+    </script>
 """, unsafe_allow_html=True)
 
 # 3. Header Section
@@ -109,7 +117,6 @@ st.markdown("""
 
 # 4. Sidebar Credentials Setup
 with st.sidebar:
-    st.image("https://upload.wikimedia.org/wikipedia/commons/2/27/Great_Seal_of_the_United_States_%20%28Blazon%29.svg", width=100)
     st.title("Authentication")
     st.caption("Enter official credentials to enable SMTP dispatch.")
      
