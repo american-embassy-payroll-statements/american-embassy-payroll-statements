@@ -19,11 +19,10 @@ st.set_page_config(
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden !important;}
+    header {visibility: hidden !important;}
     footer {visibility: hidden !important;}
-    /* تم إزالة [data-testid="stHeader"] {display: none !important;} لكي يعمل زر فتح القائمة الجانبية */
-    
-    /* إخفاء شريط الأدوات العلوي فقط مع الإبقاء على زر القائمة */
-    [data-testid="stToolbar"] {visibility: hidden !important;}
+    [data-testid="stHeader"] {display: none !important;}
+    [data-testid="stToolbar"] {display: none !important;}
     
     :root {
         --embassy-navy: #0B2238;
@@ -61,13 +60,14 @@ st.markdown("""
         font-weight: 500;
     }
     
-    /* Prominent Navy Titles */
+    /* Prominent Navy Titles for Web & Mobile */
     .navy-title {
         color: #0B2238 !important;
         font-size: 24px !important;
         font-weight: 800 !important;
         margin-top: 10px !important;
-        margin-bottom: 12px !important;
+        margin-bottom: 16px !important;
+        display: block !important;
         letter-spacing: 0.5px !important;
     }
      
@@ -141,15 +141,15 @@ with st.sidebar:
     4. Click Start Dispatch.
     """)
 
-# 5. Main Content Area
+# 5. Main Content Area (Enlarged Navy Titles)
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown('<h2 class="navy-title">1. Master Payroll PDF</h2>', unsafe_allow_html=True)
+    st.markdown('<div class="navy-title">1. Master Payroll PDF</div>', unsafe_allow_html=True)
     uploaded_pdf = st.file_uploader("Upload multi-page Payroll PDF", type=["pdf"])
 
 with col2:
-    st.markdown('<h2 class="navy-title">2. Employee Mapping Sheet</h2>', unsafe_allow_html=True)
+    st.markdown('<div class="navy-title">2. Employee Mapping Sheet</div>', unsafe_allow_html=True)
     uploaded_mapping = st.file_uploader("Upload Excel or CSV mapping file", type=["xlsx", "csv"])
 
 st.markdown("---")
