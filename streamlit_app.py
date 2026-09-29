@@ -19,7 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",  
 )
 
-# 2. Embassy Brand CSS Styling (With Enhanced UX Placeholders)
+# 2. Embassy Brand CSS Styling
 st.markdown(  
     """  
     <style>  
@@ -34,13 +34,12 @@ st.markdown(
         background-color: #F8F9FA;  
     }  
      
-    /* Sidebar Background */
+    /* Sidebar Styling */
     [data-testid="stSidebar"] {  
         background-color: #0B2238 !important;  
         padding-top: 1.5rem;
     }  
 
-    /* Sidebar Headings and Labels */
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] h3,
@@ -49,7 +48,6 @@ st.markdown(
         color: #FFFFFF !important;
     }
 
-    /* Input Fields Styling (White Background + Dark Text) */
     [data-testid="stSidebar"] input {
         background-color: #FFFFFF !important;
         color: #0F172A !important;
@@ -57,21 +55,10 @@ st.markdown(
         font-weight: 500 !important;
     }
 
-    /* Fixed Placeholder Color to Light/Medium Gray for High Contrast & Clear UX */
     [data-testid="stSidebar"] input::placeholder {
         color: #64748B !important;
         opacity: 1 !important;
         font-weight: 400 !important;
-    }
-
-    /* Webkit & Mozilla vendor prefixes for cross-browser support */
-    [data-testid="stSidebar"] input::-webkit-input-placeholder {
-        color: #64748B !important;
-        opacity: 1 !important;
-    }
-    [data-testid="stSidebar"] input::-moz-placeholder {
-        color: #64748B !important;
-        opacity: 1 !important;
     }
 
     [data-testid="collapsedControl"] {
@@ -120,6 +107,19 @@ st.markdown(
         font-weight: 700;
         color: #0F172A;
         margin-bottom: 8px;
+    }
+
+    /* Make text area resizable and visibly highlight the drag handle */
+    div[data-baseweb="textarea"] textarea {
+        resize: vertical !important;
+        min-height: 100px !important;
+        border-bottom: 2px solid #C5A059 !important;
+    }
+
+    div[data-baseweb="textarea"] textarea::-webkit-resizer {
+        background-color: #CBD5E1;
+        border: 2px solid #0B2238;
+        border-radius: 2px;
     }
 
     /* Red Dispatch Button */
@@ -232,8 +232,8 @@ with col2:
 
 st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
 
-# 6. Email Subject & Template Settings (Visible on Main View)
-st.markdown('<div class="section-title">✉️ Email Subject & Template Settings</div>', unsafe_allow_html=True)
+# 6. Email Subject & Template Settings (No emoji & Clear resizable text area)
+st.markdown('<div class="section-title">Email Subject & Template Settings</div>', unsafe_allow_html=True)
 email_col1, email_col2 = st.columns([1, 2])
 
 with email_col1:
@@ -244,9 +244,9 @@ with email_col1:
 
 with email_col2:
     email_body_template = st.text_area(
-        "Email Body", 
+        "Email Body (Drag bottom-right corner ↘ to expand)", 
         value="Dear {name},\n\nPlease find attached your official U.S. Embassy Cairo Payroll Statement for Reference Number: {ref}.\n\nBest regards,\nHuman Resources Department\nU.S. Embassy Cairo",
-        height=95
+        height=100
     )
 
 st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
@@ -271,7 +271,6 @@ if st.button(btn_label):
 
             mapping_df.columns = [str(c).strip() for c in mapping_df.columns]
 
-            # Dynamic column detection
             ref_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["ref", "id", "number", "رقم", "مرجعي"])]  
             email_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["email", "mail", "إيميل", "بريد"])]  
             name_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["name", "اسم", "employee"])]
@@ -315,7 +314,6 @@ if st.button(btn_label):
                     matched_ref = None  
                     matched_data = None
 
-                    # Strict boundary matching to eliminate collisions
                     for ref_num, data in mapping_dict.items():  
                         pattern = r'(?<!\d)' + re.escape(ref_num) + r'(?!\d)'
                         if re.search(pattern, extracted_text):  
@@ -354,7 +352,6 @@ if st.button(btn_label):
                         })
                         sent_count += 1
                     else:
-                        # Zero-Storage In-Memory extraction & Dispatch
                         writer = PdfWriter()  
                         writer.add_page(reader.pages[index])
 
