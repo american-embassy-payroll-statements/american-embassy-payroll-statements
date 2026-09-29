@@ -15,19 +15,25 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Custom CSS Styling (Includes rules to hide Header, Footer, and Streamlit Badges)
+# 2. Custom CSS Styling (Includes strict rules to hide Header, Footer, Fork, and Streamlit Badges)
 st.markdown("""
     <style>
-    /* Hide Streamlit Header, Footer, and Toolbar elements */
+    /* Hide Streamlit Header, Footer, Toolbar, and Floating Badges */
     #MainMenu {visibility: hidden;}
     header {visibility: hidden;}
     footer {visibility: hidden;}
-    [data-testid="stHeader"] {display: none;}
-    [data-testid="stToolbar"] {display: none;}
-    [data-testid="stDecoration"] {display: none;}
-    [data-testid="stStatusWidget"] {display: none;}
+    [data-testid="stHeader"] {display: none !important;}
+    [data-testid="stToolbar"] {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
+    
+    /* Hide Streamlit Cloud viewer badge and bottom-right icons */
+    div[class*="viewerBadge"] {display: none !important;}
+    div[class*="stAppDeployButton"] {display: none !important;}
+    a[class*="viewerBadge"] {display: none !important;}
     .viewerBadge_container__1613n {display: none !important;}
     .viewerBadge_link__1S137 {display: none !important;}
+    iframe[title="streamlit_badge"] {display: none !important;}
     
     :root {
         --embassy-navy: #0B2238;
