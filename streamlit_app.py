@@ -19,7 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",  
 )
 
-# 2. Embassy Brand CSS Styling
+# 2. Embassy Brand CSS Styling (With Complete Fork & Header Cleanup)
 st.markdown(  
     """  
     <style>  
@@ -33,6 +33,19 @@ st.markdown(
     .stApp {  
         background-color: #F8F9FA;  
     }  
+
+    /* --- Hide Streamlit Cloud Header, Fork, GitHub Icon & Deploy Button --- */
+    .stAppDeployButton,
+    [data-testid="stAppDeployButton"],
+    header[data-testid="stHeader"],
+    .viewerBadge_container__r5tak,
+    .styles_viewerBadge__1yvlG,
+    div[data-testid="stToolbarActions"],
+    a[href*="github.com"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0px !important;
+    }
      
     /* Sidebar Styling */
     [data-testid="stSidebar"] {  
@@ -61,9 +74,11 @@ st.markdown(
         font-weight: 400 !important;
     }
 
+    /* Force Sidebar Open/Collapse Controller to Stay Accessible */
     [data-testid="collapsedControl"] {
         display: block !important;
         color: #0B2238 !important;
+        z-index: 999999 !important;
     }
 
     .guide-box {
@@ -109,7 +124,7 @@ st.markdown(
         margin-bottom: 8px;
     }
 
-    /* Make text area resizable and visibly highlight the drag handle */
+    /* Resizable textarea UX styling */
     div[data-baseweb="textarea"] textarea {
         resize: vertical !important;
         min-height: 100px !important;
@@ -232,7 +247,7 @@ with col2:
 
 st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
 
-# 6. Email Subject & Template Settings (No emoji & Clear resizable text area)
+# 6. Email Subject & Template Settings
 st.markdown('<div class="section-title">Email Subject & Template Settings</div>', unsafe_allow_html=True)
 email_col1, email_col2 = st.columns([1, 2])
 
