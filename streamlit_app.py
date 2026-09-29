@@ -291,8 +291,8 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                 except Exception:  
                     pass  
 
-st.markdown("""  
-    <div class="custom-footer">  
-       © 2026 American Embassy Payroll Statements. All Rights Reserved. Confidential & Internal Use Only.  
-    </div>  
+st.markdown("""
+    <div class="custom-footer">
+        © 2026 American Embassy Payroll Statements. All Rights Reserved. Confidential & Internal Use Only.
+    </div>
 """, unsafe_allow_html=True)
