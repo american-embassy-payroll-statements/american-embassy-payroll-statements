@@ -15,16 +15,35 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Advanced Injection to Remove Streamlit Cloud Viewer Badge / Created By
+# 2. Strict CSS Overlay & Viewport Hack to Block Floating Cloud Badges Completely
 st.markdown("""
     <style>
-    /* Hide Default Header & Footer */
-    #MainMenu {visibility: hidden;}
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
+    /* Hide Streamlit Native Elements */
+    #MainMenu {visibility: hidden !important;}
+    header {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
     [data-testid="stHeader"] {display: none !important;}
     [data-testid="stToolbar"] {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
     
+    /* Cover and block bottom floating badge layer */
+    body {
+        overflow-x: hidden;
+    }
+    
+    /* Create an impenetrable fixed overlay at the bottom right/center to cover the badge */
+    .badge-blocker {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 60px;
+        background-color: #F4F6F8;
+        z-index: 999999999 !important;
+        pointer-events: auto;
+    }
+
     :root {
         --embassy-navy: #0B2238;
         --embassy-red: #A61C1E;
@@ -34,6 +53,7 @@ st.markdown("""
      
     .stApp {
         background-color: #F4F6F8;
+        padding-bottom: 60px !important;
     }
      
     .header-box {
@@ -88,26 +108,8 @@ st.markdown("""
     }
     </style>
 
-    <script>
-    function removeCreatedBy() {
-        try {
-            // Target the floating badge container and iframe in the parent window
-            const pDoc = window.parent.document;
-            const iframes = pDoc.querySelectorAll('iframe');
-            iframes.forEach(iframe => {
-                if (iframe.src.includes('share.streamlit.io') || iframe.title.includes('badge')) {
-                    iframe.remove();
-                }
-            });
-            const badges = pDoc.querySelectorAll('[class*="viewerBadge"], [class*="ViewerBadge"], [data-testid="stStatusWidget"]');
-            badges.forEach(b => b.remove());
-        } catch (e) {
-            console.log(e);
-        }
-    }
-    // Loop to continuously ensure the injected elements are removed immediately when loaded
-    setInterval(removeCreatedBy, 300);
-    </script>
+    <!-- Invisible Blocker Div to obscure Streamlit Cloud Badge -->
+    <div class="badge-blocker"></div>
 """, unsafe_allow_html=True)
 
 # 3. Header Section
