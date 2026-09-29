@@ -19,7 +19,6 @@ st.set_page_config(
 st.markdown("""
     <style>
     #MainMenu {visibility: hidden !important;}
-    header {visibility: hidden !important;}
     footer {visibility: hidden !important;}
     [data-testid="stHeader"] {display: none !important;}
     [data-testid="stToolbar"] {display: none !important;}
@@ -34,6 +33,41 @@ st.markdown("""
     .stApp {
         background-color: #F4F6F8;
     }
+
+    /* Make Sidebar Toggle Button (Collapse/Expand) Always Visible & Prominent */
+    [data-testid="stSidebarCollapsedControl"], 
+    button[aria-label="Expand sidebar"], 
+    button[aria-label="Collapse sidebar"] {
+        position: fixed !important;
+        top: 15px !important;
+        left: 15px !important;
+        z-index: 999999 !important;
+        background-color: #0B2238 !important;
+        color: #FFFFFF !important;
+        border: 2px solid #C5A059 !important;
+        border-radius: 8px !important;
+        padding: 6px !important;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3) !important;
+        visibility: visible !important;
+        display: flex !important;
+    }
+
+    [data-testid="stSidebarCollapsedControl"] svg, 
+    button[aria-label="Expand sidebar"] svg, 
+    button[aria-label="Collapse sidebar"] svg {
+        fill: #FFFFFF !important;
+        color: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    [data-testid="stSidebarCollapsedControl"]:hover, 
+    button[aria-label="Expand sidebar"]:hover {
+        background-color: #A61C1E !important;
+        border-color: #FFFFFF !important;
+        cursor: pointer !important;
+    }
      
     .header-box {
         background: linear-gradient(135deg, #0B2238 0%, #173753 100%);
@@ -44,6 +78,7 @@ st.markdown("""
         border-bottom: 4px solid #A61C1E;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         margin-bottom: 25px;
+        margin-top: 10px;
     }
      
     .header-title {
@@ -60,14 +95,13 @@ st.markdown("""
         font-weight: 500;
     }
     
-    /* Prominent Navy Titles for Web & Mobile */
+    /* Prominent Navy Titles */
     .navy-title {
         color: #0B2238 !important;
         font-size: 24px !important;
         font-weight: 800 !important;
         margin-top: 10px !important;
-        margin-bottom: 16px !important;
-        display: block !important;
+        margin-bottom: 12px !important;
         letter-spacing: 0.5px !important;
     }
      
@@ -141,15 +175,15 @@ with st.sidebar:
     4. Click Start Dispatch.
     """)
 
-# 5. Main Content Area (Enlarged Navy Titles)
+# 5. Main Content Area
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown('<div class="navy-title">1. Master Payroll PDF</div>', unsafe_allow_html=True)
+    st.markdown('<h2 class="navy-title">1. Master Payroll PDF</h2>', unsafe_allow_html=True)
     uploaded_pdf = st.file_uploader("Upload multi-page Payroll PDF", type=["pdf"])
 
 with col2:
-    st.markdown('<div class="navy-title">2. Employee Mapping Sheet</div>', unsafe_allow_html=True)
+    st.markdown('<h2 class="navy-title">2. Employee Mapping Sheet</h2>', unsafe_allow_html=True)
     uploaded_mapping = st.file_uploader("Upload Excel or CSV mapping file", type=["xlsx", "csv"])
 
 st.markdown("---")
@@ -274,7 +308,7 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
 # 7. Copyright Footer Bar
 st.markdown("""
     <div class="custom-footer">
-        © 2026 American Embassy Payroll Statements. All Rights Reserved.
+       © 2026 American Embassy Payroll Statements. All Rights Reserved.
 
 Confidential & Internal Use Only.
     </div>
