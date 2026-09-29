@@ -15,25 +15,17 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Custom CSS Styling & JS Injection to Completely Remove Cloud Badges
+# 2. Custom CSS Styling (Hides 'Created By' profile icon only)
 st.markdown("""
     <style>
-    /* Hide Streamlit Header, Footer, Toolbar, and Floating Badges */
+    /* Hide Main Menu & Footer */
     #MainMenu {visibility: hidden;}
-    header {visibility: hidden;}
     footer {visibility: hidden;}
-    [data-testid="stHeader"] {display: none !important;}
-    [data-testid="stToolbar"] {display: none !important;}
-    [data-testid="stDecoration"] {display: none !important;}
-    [data-testid="stStatusWidget"] {display: none !important;}
     
-    /* Target viewer badge containers */
-    div[class*="viewerBadge"] {display: none !important;}
-    div[class*="stAppDeployButton"] {display: none !important;}
-    a[class*="viewerBadge"] {display: none !important;}
-    .viewerBadge_container__1613n {display: none !important;}
-    .viewerBadge_link__1S137 {display: none !important;}
-    iframe[title="streamlit_badge"] {display: none !important;}
+    /* Target and hide the 'Created by' user avatar badge in Streamlit Cloud */
+    [data-testid="stHeader"] a[href*="github.com"] {display: none !important;}
+    div[class*="viewerBadge"] > a:first-child {display: none !important;}
+    div[class*="stViewerBadge"] > a:first-child {display: none !important;}
     
     :root {
         --embassy-navy: #0B2238;
@@ -97,14 +89,6 @@ st.markdown("""
         transform: translateY(-1px);
     }
     </style>
-
-    <script>
-    function removeBadges() {
-        const badges = window.parent.document.querySelectorAll('div[class*="viewerBadge"], a[class*="viewerBadge"], iframe[title="streamlit_badge"]');
-        badges.forEach(b => b.remove());
-    }
-    setInterval(removeBadges, 500);
-    </script>
 """, unsafe_allow_html=True)
 
 # 3. Header Section
