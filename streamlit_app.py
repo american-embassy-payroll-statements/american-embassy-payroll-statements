@@ -22,12 +22,52 @@ st.markdown("""
     footer {visibility: hidden !important;}
     [data-testid="stToolbar"] {visibility: hidden !important;}
     
-    /* Make Header transparent instead of display:none so toggle button exists */
+    /* Clean Top Header Space */
     [data-testid="stHeader"] {
         background-color: transparent !important;
-        z-index: 99999 !important;
+        height: 0px !important;
+        min-height: 0px !important;
     }
-    
+
+    /* Force Sidebar Toggle Button to Always Exist & Be Highly Visible */
+    button[aria-label="Expand sidebar"],
+    button[aria-label="Collapse sidebar"],
+    [data-testid="stSidebarCollapsedControl"] {
+        display: flex !important;
+        visibility: visible !important;
+        position: fixed !important;
+        top: 12px !important;
+        left: 12px !important;
+        z-index: 9999999 !important;
+        background-color: #C5A059 !important;
+        border: 2px solid #0B2238 !important;
+        border-radius: 8px !important;
+        padding: 6px !important;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    button[aria-label="Expand sidebar"] svg,
+    button[aria-label="Collapse sidebar"] svg,
+    [data-testid="stSidebarCollapsedControl"] svg {
+        fill: #0B2238 !important;
+        color: #0B2238 !important;
+        stroke: #0B2238 !important;
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    button[aria-label="Expand sidebar"]:hover,
+    button[aria-label="Collapse sidebar"]:hover {
+        background-color: #A61C1E !important;
+        border-color: #FFFFFF !important;
+    }
+
+    button[aria-label="Expand sidebar"]:hover svg,
+    button[aria-label="Collapse sidebar"]:hover svg {
+        fill: #FFFFFF !important;
+        color: #FFFFFF !important;
+    }
+
     :root {
         --embassy-navy: #0B2238;
         --embassy-red: #A61C1E;
@@ -37,40 +77,6 @@ st.markdown("""
      
     .stApp {
         background-color: #F4F6F8;
-    }
-
-    /* Styling Sidebar Toggle Control Button for High Visibility */
-    [data-testid="stSidebarCollapsedControl"],
-    [data-testid="stSidebarExpandButton"] {
-        background-color: #0B2238 !important;
-        border: 2px solid #C5A059 !important;
-        border-radius: 8px !important;
-        padding: 4px !important;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25) !important;
-        margin-top: 8px !important;
-        margin-left: 8px !important;
-    }
-
-    [data-testid="stSidebarCollapsedControl"] button,
-    [data-testid="stSidebarExpandButton"] button {
-        background-color: #0B2238 !important;
-        color: #FFFFFF !important;
-    }
-
-    [data-testid="stSidebarCollapsedControl"] svg,
-    [data-testid="stSidebarExpandButton"] svg,
-    button[aria-label="Expand sidebar"] svg {
-        fill: #FFFFFF !important;
-        color: #FFFFFF !important;
-        stroke: #FFFFFF !important;
-        width: 22px !important;
-        height: 22px !important;
-    }
-
-    [data-testid="stSidebarCollapsedControl"]:hover,
-    [data-testid="stSidebarExpandButton"]:hover {
-        background-color: #A61C1E !important;
-        border-color: #FFFFFF !important;
     }
      
     .header-box {
@@ -82,7 +88,7 @@ st.markdown("""
         border-bottom: 4px solid #A61C1E;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         margin-bottom: 25px;
-        margin-top: -30px;
+        margin-top: 15px;
     }
      
     .header-title {
