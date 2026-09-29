@@ -15,35 +15,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Strict CSS Overlay & Viewport Hack to Block Floating Cloud Badges Completely
+# 2. Custom CSS Styling
 st.markdown("""
     <style>
-    /* Hide Streamlit Native Elements */
     #MainMenu {visibility: hidden !important;}
     header {visibility: hidden !important;}
     footer {visibility: hidden !important;}
     [data-testid="stHeader"] {display: none !important;}
     [data-testid="stToolbar"] {display: none !important;}
-    [data-testid="stDecoration"] {display: none !important;}
-    [data-testid="stStatusWidget"] {display: none !important;}
     
-    /* Cover and block bottom floating badge layer */
-    body {
-        overflow-x: hidden;
-    }
-    
-    /* Create an impenetrable fixed overlay at the bottom right/center to cover the badge */
-    .badge-blocker {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100vw;
-        height: 60px;
-        background-color: #F4F6F8;
-        z-index: 999999999 !important;
-        pointer-events: auto;
-    }
-
     :root {
         --embassy-navy: #0B2238;
         --embassy-red: #A61C1E;
@@ -53,7 +33,6 @@ st.markdown("""
      
     .stApp {
         background-color: #F4F6F8;
-        padding-bottom: 60px !important;
     }
      
     .header-box {
@@ -72,13 +51,22 @@ st.markdown("""
         font-weight: 700;
         letter-spacing: 1px;
         margin-bottom: 5px;
-        color: #FFFFFF;
+        color: #FFFFFF !important;
     }
      
     .header-subtitle {
         font-size: 15px;
-        color: #C5A059;
+        color: #C5A059 !important;
         font-weight: 500;
+    }
+    
+    /* Strict Navy Titles for Web & Mobile */
+    .navy-title {
+        color: #0B2238 !important;
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        margin-bottom: 12px !important;
+        display: block !important;
     }
      
     [data-testid="stSidebar"] {
@@ -106,10 +94,24 @@ st.markdown("""
         background-color: #821416 !important;
         transform: translateY(-1px);
     }
-    </style>
 
-    <!-- Invisible Blocker Div to obscure Streamlit Cloud Badge -->
-    <div class="badge-blocker"></div>
+    /* Custom Copyright Footer Bar */
+    .custom-footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #0B2238;
+        color: #FFFFFF;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        z-index: 9999;
+        border-top: 2px solid #C5A059;
+    }
+    </style>
 """, unsafe_allow_html=True)
 
 # 3. Header Section
@@ -137,15 +139,15 @@ with st.sidebar:
     4. Click Start Dispatch.
     """)
 
-# 5. Main Content Area
+# 5. Main Content Area (Navy Titles)
 col1, col2 = st.columns(2)
 
 with col1:
-    st.markdown("### 1. Master Payroll PDF")
+    st.markdown('<p class="navy-title">1. Master Payroll PDF</p>', unsafe_allow_html=True)
     uploaded_pdf = st.file_uploader("Upload multi-page Payroll PDF", type=["pdf"])
 
 with col2:
-    st.markdown("### 2. Employee Mapping Sheet")
+    st.markdown('<p class="navy-title">2. Employee Mapping Sheet</p>', unsafe_allow_html=True)
     uploaded_mapping = st.file_uploader("Upload Excel or CSV mapping file", type=["xlsx", "csv"])
 
 st.markdown("---")
@@ -266,3 +268,10 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                     server.quit()
                 except Exception:
                     pass
+
+# 7. Copyright Footer Bar
+st.markdown("""
+    <div class="custom-footer">
+        © 2026 American Embassy Payroll Statements. All Rights Reserved.
+    </div>
+""", unsafe_allow_html=True)
