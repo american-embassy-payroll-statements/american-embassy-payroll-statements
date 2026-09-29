@@ -47,6 +47,35 @@ st.markdown("""
         color: #C5A059 !important;  
     }  
 
+    /* Style Text Inputs in Sidebar */
+    [data-testid="stSidebar"] div[data-baseweb="input"] {
+        background-color: #173753 !important;
+        border: 1px solid #C5A059 !important;
+        border-radius: 6px !important;
+    }
+
+    [data-testid="stSidebar"] input {
+        color: #FFFFFF !important;
+        background-color: #173753 !important;
+    }
+
+    [data-testid="stSidebar"] input::placeholder {
+        color: #A0B2C6 !important;
+    }
+
+    /* Style Info Box in Sidebar */
+    [data-testid="stSidebar"] [data-testid="stAlert"] {
+        background-color: #173753 !important;
+        color: #FFFFFF !important;
+        border: 1px solid #C5A059 !important;
+        border-radius: 8px !important;
+    }
+
+    [data-testid="stSidebar"] [data-testid="stAlert"] p,
+    [data-testid="stSidebar"] [data-testid="stAlert"] li {
+        color: #FFFFFF !important;
+    }
+
     .stApp {  
         background-color: #F4F6F8;  
     }  
