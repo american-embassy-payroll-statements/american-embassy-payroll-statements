@@ -34,17 +34,6 @@ st.markdown("""
         min-width: 320px !important;
     }  
 
-    [data-testid="stSidebarCollapsedControl"] {
-        display: flex !important;
-        visibility: visible !important;
-        position: fixed !important;
-        top: 15px !important;
-        left: 15px !important;
-        z-index: 999999 !important;
-        background-color: #C5A059 !important;
-        border-radius: 6px !important;
-    }
-
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] h3, 
@@ -143,8 +132,8 @@ with st.sidebar:
     st.title("Authentication")  
     st.caption("Enter official credentials to enable SMTP dispatch.")  
        
-    sender_email = st.text_input("Sender Gmail Address", placeholder="e.g. hr-payroll@embassy.gov")  
-    app_password = st.text_input("Google App Password (16 digits)", type="password", placeholder="•••• •••• •••• ••••")  
+    sender_email = st.text_input("Sender Gmail Address", key="sender_email_input", placeholder="e.g. hr-payroll@embassy.gov")  
+    app_password = st.text_input("Google App Password (16 digits)", key="app_pass_input", type="password", placeholder="•••• •••• •••• ••••")  
        
     st.markdown("---")  
     st.markdown("### Quick Guide")  
@@ -301,6 +290,7 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
                     server.quit()  
                 except Exception:  
                     pass  
+
 st.markdown("""  
     <div class="custom-footer">  
        © 2026 American Embassy Payroll Statements. All Rights Reserved. Confidential & Internal Use Only.  
