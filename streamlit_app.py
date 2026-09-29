@@ -1,6 +1,8 @@
 import io  
 import smtplib  
+import time
 import re
+from datetime import datetime
 from email.mime.application import MIMEApplication  
 from email.mime.multipart import MIMEMultipart  
 from email.mime.text import MIMEText
@@ -17,7 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",  
 )
 
-# 2. Complete CSS matching U.S. Embassy Presentation & Mockup exactly
+# 2. Embassy Brand CSS Styling
 st.markdown(  
     """  
     <style>  
@@ -32,10 +34,9 @@ st.markdown(
         background-color: #F8F9FA;  
     }  
      
-    /* Sidebar Dark Navy Styling */
     [data-testid="stSidebar"] {  
         background-color: #0B2238 !important;  
-        padding-top: 2rem;
+        padding-top: 1.5rem;
     }  
 
     [data-testid="stSidebar"] * {
@@ -47,36 +48,27 @@ st.markdown(
         font-weight: 700 !important;
     }
 
-    /* Keep input fields readable with white background and dark text */
     [data-testid="stSidebar"] input {
         background-color: #FFFFFF !important;
         color: #1E293B !important;
         border-radius: 6px !important;
-        border: 1px solid #CBD5E1 !important;
     }
 
-    [data-testid="stSidebar"] input::placeholder {
-        color: #94A3B8 !important;
-    }
-
-    /* Force Sidebar collapse/expand button to be visible */
     [data-testid="collapsedControl"] {
         display: block !important;
         color: #0B2238 !important;
     }
 
-    /* Quick Guide Box Styling */
     .guide-box {
         background-color: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 8px;
-        padding: 16px;
-        font-size: 13.5px;
+        padding: 14px;
+        font-size: 13px;
         line-height: 1.6;
         color: #E2E8F0;
     }
 
-    /* Top Navy Banner */
     .header-box {  
         background-color: #0B2238;  
         color: white;  
@@ -85,11 +77,11 @@ st.markdown(
         text-align: center;  
         border-bottom: 3.5px solid #A61C1E;  
         box-shadow: 0px 4px 14px rgba(11, 34, 56, 0.08);  
-        margin-bottom: 35px;  
+        margin-bottom: 25px;  
     }  
      
     .header-title {  
-        font-size: 22px;  
+        font-size: 24px;  
         font-weight: 800;  
         letter-spacing: 1.5px;  
         margin-bottom: 6px;  
@@ -97,46 +89,33 @@ st.markdown(
     }  
      
     .header-subtitle {  
-        font-size: 13.5px;  
+        font-size: 14px;  
         color: #C5A059;  
         font-weight: 500;  
     }  
 
-    /* Step Section Titles */
     .section-title {
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 700;
         color: #0F172A;
         margin-bottom: 8px;
     }
 
-    /* Red Dispatch Button matching design */
     .stButton > button {  
-        background-color: #A61C1E !important;  
-        color: #FFFFFF !important;  
         font-weight: 600 !important;  
         font-size: 15px !important;
         border-radius: 6px !important;  
-        padding: 10px 24px !important;  
+        padding: 10px 22px !important;  
         border: none !important;  
-        box-shadow: 0 3px 6px rgba(166, 28, 30, 0.25) !important;  
         transition: all 0.2s ease !important;  
-        width: auto !important;  
-        min-width: 250px;
     }  
-     
-    .stButton > button:hover {  
-        background-color: #881517 !important;  
-        transform: translateY(-1px);  
-    }  
-     
-    /* Footer Styling */
+
     .custom-footer {  
         text-align: center;  
-        padding: 25px 10px 10px 10px;  
+        padding: 20px 10px;  
         color: #475569;  
         font-size: 12px;  
-        margin-top: 50px;  
+        margin-top: 40px;  
         border-top: 1px solid #E2E8F0;
     }  
     </style>  
@@ -144,42 +123,51 @@ st.markdown(
     unsafe_allow_html=True,  
 )
 
-# 3. Sidebar (Authentication & Guide) Exactly as in the design
+# 3. Sidebar (Authentication & Options)
 with st.sidebar:
     st.markdown("## Authentication")
     st.markdown(
-        "<p style='font-size: 13px; color: #CBD5E1; margin-bottom: 20px;'>"
+        "<p style='font-size: 12.5px; color: #CBD5E1; margin-bottom: 15px;'>"
         "Enter official credentials to enable SMTP dispatch."
         "</p>", 
         unsafe_allow_html=True
     )
 
+    # Allow secrets pre-fill if configured
+    default_sender = st.secrets.get("GMAIL_USER", "") if hasattr(st, "secrets") else ""
+    default_pass = st.secrets.get("GMAIL_PASS", "") if hasattr(st, "secrets") else ""
+
     sender_email = st.text_input(  
         "Sender Gmail Address", 
+        value=default_sender,
         placeholder="e.g. hr-payroll@embassy.gov"  
     )  
     app_password = st.text_input(  
         "Google App Password (16 digits)",  
+        value=default_pass,
         type="password",  
         placeholder="•••• •••• •••• ••••"  
     )
 
-    st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
-    st.markdown("### Quick Guide")
+    st.markdown("---")
+    st.markdown("### Execution Mode")
+    dry_run = st.toggle("Dry Run (Simulation Mode)", value=False, help="Simulate PDF splitting and employee matching without sending any actual emails.")
     
+    st.markdown("---")
+    st.markdown("### Quick Guide")
     st.markdown(
         """
         <div class="guide-box">
-            1. Fill in your Gmail and App Password.<br>
-            2. Upload the Master Payroll PDF.<br>
-            3. Upload the Employee Mapping Sheet (Excel/CSV).<br>
-            4. Click Start Dispatch.
+            1. Fill in Gmail & App Password.<br>
+            2. Upload Master PDF & Mapping Sheet.<br>
+            3. Run <b>Dry Run</b> first to inspect matches.<br>
+            4. Switch off Dry Run & Dispatch.
         </div>
         """,
         unsafe_allow_html=True
     )
 
-# 4. Main Section - Banner
+# 4. Header Banner
 st.markdown(  
     """  
     <div class="header-box">  
@@ -190,7 +178,7 @@ st.markdown(
     unsafe_allow_html=True,  
 )
 
-# 5. Main Section - Two Columns for Uploads
+# 5. File Upload Area
 col1, col2 = st.columns(2)
 
 with col1:  
@@ -198,7 +186,7 @@ with col1:
     uploaded_pdf = st.file_uploader(  
         "Upload multi-page Payroll PDF", 
         type=["pdf"],
-        help="Upload the comprehensive unseparated PDF payroll document"
+        help="Upload the unseparated multi-page payroll document"
     )
 
 with col2:  
@@ -206,21 +194,32 @@ with col2:
     uploaded_mapping = st.file_uploader(  
         "Upload Excel or CSV mapping file", 
         type=["xlsx", "csv"],
-        help="Upload the Excel or CSV containing Reference Numbers and Emails"
+        help="Must contain columns for Reference Number and Email Address"
     )
 
-st.markdown("<div style='margin-top: 25px;'></div>", unsafe_allow_html=True)
+with st.expander("✉️ Email Subject & Template Settings"):
+    email_subject = st.text_input("Email Subject", value="Official Payroll Statement - Ref: {ref}")
+    email_body_template = st.text_area(
+        "Email Body", 
+        value="Dear {name},\n\nPlease find attached your official U.S. Embassy Cairo Payroll Statement for Reference Number: {ref}.\n\nBest regards,\nHuman Resources Department\nU.S. Embassy Cairo",
+        height=130
+    )
 
-# 6. Dispatch Button & Zero Storage In-Memory Processing
-if st.button("Start Payroll Dispatch Process"):  
-    if not sender_email or not app_password:  
-        st.error("Authentication required: Please enter both Sender Email and App Password in the sidebar.")  
+st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
+
+# 6. Dispatch Execution Logic
+btn_label = "🔍 Run Matching Simulation (Dry Run)" if dry_run else "🚀 Start Payroll Dispatch Process"
+btn_type = "secondary" if dry_run else "primary"
+
+if st.button(btn_label, type=btn_type):  
+    if not dry_run and (not sender_email or not app_password):  
+        st.error("Authentication required: Please provide both Sender Email and App Password in the sidebar.")  
     elif not uploaded_pdf or not uploaded_mapping:  
-        st.error("Missing files: Please upload both the Master Payroll PDF and Employee Mapping Sheet.")  
+        st.error("Missing files: Please upload both Master Payroll PDF and Employee Mapping Sheet.")  
     else:  
-        try:  
-            status_box = st.status("Processing in-memory dispatch...", expanded=True)
-            status_box.write("Parsing employee mapping sheet...")
+        try:
+            status_box = st.status("Initializing payroll processing...", expanded=True)
+            status_box.write("Reading employee mapping sheet...")
 
             if uploaded_mapping.name.endswith(".csv"):  
                 mapping_df = pd.read_csv(uploaded_mapping)  
@@ -229,13 +228,13 @@ if st.button("Start Payroll Dispatch Process"):
 
             mapping_df.columns = [str(c).strip() for c in mapping_df.columns]
 
-            # Dynamic column identification
+            # Dynamic column auto-detection
             ref_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["ref", "id", "number", "رقم", "مرجعي"])]  
             email_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["email", "mail", "إيميل", "بريد"])]  
             name_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["name", "اسم", "employee"])]
 
             if not ref_col or not email_col:  
-                st.error("Could not auto-detect Reference Number and Email columns. Please review the sheet headers.")  
+                st.error("Failed to detect Reference ID and Email columns automatically. Please verify your file column headers.")  
                 st.stop()
 
             ref_key = ref_col[0]  
@@ -250,90 +249,155 @@ if st.button("Start Payroll Dispatch Process"):
                 if ref_val and ref_val.lower() != 'nan':  
                     mapping_dict[ref_val] = {"email": email_val, "name": emp_name}
 
-            status_box.write("Connecting securely via Google SMTP TLS...")
-            server = smtplib.SMTP("smtp.gmail.com", 587)  
-            server.starttls()  
-            server.login(sender_email.strip(), app_password.strip().replace(" ", ""))
+            server = None
+            if not dry_run:
+                status_box.write("Connecting to Google SMTP (TLS)...")
+                server = smtplib.SMTP("smtp.gmail.com", 587, timeout=25)  
+                server.starttls()  
+                server.login(sender_email.strip(), app_password.strip().replace(" ", ""))
 
             pdf_bytes = uploaded_pdf.read()  
             reader = PdfReader(io.BytesIO(pdf_bytes))
-
             progress_bar = st.progress(0)  
+
+            audit_log = []
             sent_count = 0  
-            unmatched_pages = []
+            unmatched_count = 0
 
             with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:  
                 total_pages = len(pdf.pages)
 
                 for index, page in enumerate(pdf.pages):  
                     extracted_text = page.extract_text() or ""
-
                     matched_ref = None  
                     matched_data = None
 
-                    # In-memory exact and word-boundary reference matching
+                    # Strict boundary matching to eliminate collisions (e.g. Ref 102 vs 1020)
                     for ref_num, data in mapping_dict.items():  
-                        if re.search(r'\b' + re.escape(ref_num) + r'\b', extracted_text) or (ref_num in extracted_text):  
+                        pattern = r'(?<!\d)' + re.escape(ref_num) + r'(?!\d)'
+                        if re.search(pattern, extracted_text):  
                             matched_ref = ref_num  
                             matched_data = data  
                             break
 
+                    timestamp_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
                     if not matched_ref or not matched_data["email"]:  
-                        unmatched_pages.append(index + 1)
+                        unmatched_count += 1
+                        audit_log.append({
+                            "Page": index + 1,
+                            "Reference Number": "N/A",
+                            "Employee Name": "N/A",
+                            "Recipient Email": "N/A",
+                            "Status": "Unmatched",
+                            "Timestamp": timestamp_now,
+                            "Notes": "Reference ID not found in page text"
+                        })
+                        progress_bar.progress((index + 1) / total_pages)
                         continue
 
                     recipient_email = matched_data["email"]  
                     emp_name = matched_data["name"]
 
-                    # Extract single page cleanly in memory (Zero Storage)
-                    writer = PdfWriter()  
-                    writer.add_page(reader.pages[index])
+                    if dry_run:
+                        # Simulation Mode
+                        audit_log.append({
+                            "Page": index + 1,
+                            "Reference Number": matched_ref,
+                            "Employee Name": emp_name,
+                            "Recipient Email": recipient_email,
+                            "Status": "Simulated Matched",
+                            "Timestamp": timestamp_now,
+                            "Notes": "Ready for dispatch"
+                        })
+                        sent_count += 1
+                    else:
+                        # Zero-Storage In-Memory extraction & Dispatch
+                        writer = PdfWriter()  
+                        writer.add_page(reader.pages[index])
 
-                    out_pdf_bytes = io.BytesIO()  
-                    writer.write(out_pdf_bytes)  
-                    out_pdf_bytes.seek(0)
+                        out_pdf_bytes = io.BytesIO()  
+                        writer.write(out_pdf_bytes)  
+                        out_pdf_bytes.seek(0)
 
-                    msg = MIMEMultipart()  
-                    msg["From"] = f"U.S. Embassy Cairo HR <{sender_email}>"  
-                    msg["To"] = recipient_email  
-                    msg["Subject"] = f"Official Payroll Statement - Ref: {matched_ref}"
+                        msg = MIMEMultipart()  
+                        msg["From"] = f"U.S. Embassy Cairo HR <{sender_email}>"  
+                        msg["To"] = recipient_email  
+                        msg["Subject"] = email_subject.format(name=emp_name, ref=matched_ref)
 
-                    body = (  
-                        f"Dear {emp_name},\n\n"
-                        f"Please find attached your official U.S. Embassy Cairo Payroll Statement for Reference Number: {matched_ref}.\n\n"
-                        f"Best regards,\n"
-                        f"Human Resources Department\n"
-                        f"U.S. Embassy Cairo"  
-                    )  
-                    msg.attach(MIMEText(body, "plain"))
+                        body_content = email_body_template.format(name=emp_name, ref=matched_ref)
+                        msg.attach(MIMEText(body_content, "plain"))
 
-                    attachment = MIMEApplication(  
-                        out_pdf_bytes.read(),  
-                        Name=f"Payroll_Statement_{matched_ref}.pdf",  
-                    )  
-                    attachment["Content-Disposition"] = f'attachment; filename="Payroll_Statement_{matched_ref}.pdf"'  
-                    msg.attach(attachment)
+                        attachment = MIMEApplication(  
+                            out_pdf_bytes.read(),  
+                            Name=f"Payroll_Statement_{matched_ref}.pdf",  
+                        )  
+                        attachment["Content-Disposition"] = f'attachment; filename="Payroll_Statement_{matched_ref}.pdf"'  
+                        msg.attach(attachment)
 
-                    server.send_message(msg)  
-                    sent_count += 1
+                        try:
+                            server.send_message(msg)  
+                            sent_count += 1
+                            audit_log.append({
+                                "Page": index + 1,
+                                "Reference Number": matched_ref,
+                                "Employee Name": emp_name,
+                                "Recipient Email": recipient_email,
+                                "Status": "Success",
+                                "Timestamp": timestamp_now,
+                                "Notes": "Delivered to SMTP queue"
+                            })
+                            time.sleep(0.3)  # Anti-throttling rate protection
+                        except Exception as send_err:
+                            audit_log.append({
+                                "Page": index + 1,
+                                "Reference Number": matched_ref,
+                                "Employee Name": emp_name,
+                                "Recipient Email": recipient_email,
+                                "Status": "Failed",
+                                "Timestamp": timestamp_now,
+                                "Notes": str(send_err)
+                            })
+
                     progress_bar.progress((index + 1) / total_pages)
 
-            server.quit()
-            status_box.update(label="Dispatch process finished!", state="complete", expanded=False)
+            if server:
+                server.quit()
 
-            st.success("Payroll statements dispatched successfully.")  
+            status_box.update(label="Processing Finished!", state="complete", expanded=False)
+
+            # Display Results & Summary
+            if dry_run:
+                st.info("Simulation completed. Review matched pages below before live dispatch.")
+            else:
+                st.success("Payroll statement dispatch completed.")
+
             m1, m2, m3 = st.columns(3)  
-            m1.metric("Total Pages Processed", total_pages)  
-            m2.metric("Successfully Sent", sent_count)  
-            m3.metric("Unmatched Pages", len(unmatched_pages))
+            m1.metric("Total Pages", total_pages)  
+            m2.metric("Matched / Sent" if not dry_run else "Matched (Simulated)", sent_count)  
+            m3.metric("Unmatched Pages", unmatched_count)
 
-            if unmatched_pages:
-                st.warning(f"Unmatched page numbers: {unmatched_pages}")
+            # Audit Table and Excel Download
+            log_df = pd.DataFrame(audit_log)
+            st.markdown("### Process Audit Trail")
+            st.dataframe(log_df, use_container_width=True)
+
+            log_output = io.BytesIO()
+            with pd.ExcelWriter(log_output, engine='openpyxl') as writer:
+                log_df.to_excel(writer, index=False, sheet_name="Dispatch_Log")
+            log_output.seek(0)
+
+            st.download_button(
+                label="📥 Download Official Dispatch Audit Log (Excel)",
+                data=log_output,
+                file_name=f"Payroll_Dispatch_Audit_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
 
         except Exception as e:  
-            st.error(f"Process failed: {str(e)}")
+            st.error(f"Execution Encountered An Error: {str(e)}")
 
-# 7. Footer exactly as in the design
+# 7. Footer
 st.markdown(  
     """  
     <div class="custom-footer">  
