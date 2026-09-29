@@ -20,8 +20,13 @@ st.markdown("""
     <style>
     #MainMenu {visibility: hidden !important;}
     footer {visibility: hidden !important;}
-    [data-testid="stHeader"] {display: none !important;}
-    [data-testid="stToolbar"] {display: none !important;}
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+    
+    /* Make Header transparent instead of display:none so toggle button exists */
+    [data-testid="stHeader"] {
+        background-color: transparent !important;
+        z-index: 99999 !important;
+    }
     
     :root {
         --embassy-navy: #0B2238;
@@ -34,39 +39,38 @@ st.markdown("""
         background-color: #F4F6F8;
     }
 
-    /* Make Sidebar Toggle Button (Collapse/Expand) Always Visible & Prominent */
-    [data-testid="stSidebarCollapsedControl"], 
-    button[aria-label="Expand sidebar"], 
-    button[aria-label="Collapse sidebar"] {
-        position: fixed !important;
-        top: 15px !important;
-        left: 15px !important;
-        z-index: 999999 !important;
+    /* Styling Sidebar Toggle Control Button for High Visibility */
+    [data-testid="stSidebarCollapsedControl"],
+    [data-testid="stSidebarExpandButton"] {
         background-color: #0B2238 !important;
-        color: #FFFFFF !important;
         border: 2px solid #C5A059 !important;
         border-radius: 8px !important;
-        padding: 6px !important;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3) !important;
-        visibility: visible !important;
-        display: flex !important;
+        padding: 4px !important;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25) !important;
+        margin-top: 8px !important;
+        margin-left: 8px !important;
     }
 
-    [data-testid="stSidebarCollapsedControl"] svg, 
-    button[aria-label="Expand sidebar"] svg, 
-    button[aria-label="Collapse sidebar"] svg {
+    [data-testid="stSidebarCollapsedControl"] button,
+    [data-testid="stSidebarExpandButton"] button {
+        background-color: #0B2238 !important;
+        color: #FFFFFF !important;
+    }
+
+    [data-testid="stSidebarCollapsedControl"] svg,
+    [data-testid="stSidebarExpandButton"] svg,
+    button[aria-label="Expand sidebar"] svg {
         fill: #FFFFFF !important;
         color: #FFFFFF !important;
         stroke: #FFFFFF !important;
-        width: 20px !important;
-        height: 20px !important;
+        width: 22px !important;
+        height: 22px !important;
     }
 
-    [data-testid="stSidebarCollapsedControl"]:hover, 
-    button[aria-label="Expand sidebar"]:hover {
+    [data-testid="stSidebarCollapsedControl"]:hover,
+    [data-testid="stSidebarExpandButton"]:hover {
         background-color: #A61C1E !important;
         border-color: #FFFFFF !important;
-        cursor: pointer !important;
     }
      
     .header-box {
@@ -78,7 +82,7 @@ st.markdown("""
         border-bottom: 4px solid #A61C1E;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         margin-bottom: 25px;
-        margin-top: 10px;
+        margin-top: -30px;
     }
      
     .header-title {
@@ -308,8 +312,6 @@ if st.button("Start Payroll Dispatch Process", type="primary"):
 # 7. Copyright Footer Bar
 st.markdown("""
     <div class="custom-footer">
-       © 2026 American Embassy Payroll Statements. All Rights Reserved.
-
-Confidential & Internal Use Only.
+        © 2026 American Embassy Payroll Statements. All Rights Reserved.
     </div>
 """, unsafe_allow_html=True)
