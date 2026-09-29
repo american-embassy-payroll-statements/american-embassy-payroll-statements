@@ -17,6 +17,34 @@ hide_elements = """
     div[class*="viewerBadge"] {display: none !important;}
     div[data-testid="stHeader"] {display: none !important;}
     </style>
+
+
+    import streamlit as st
+
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden !important;}
+    header {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    [data-testid="stToolbar"] {display: none !important;}
+    
+    .stAppDeployButton {display: none !important;}
+    [data-testid="stAppDeployButton"] {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
+    
+    div[class*="viewerBadge"] {display: none !important;}
+    div[class*="Profile"] {display: none !important;}
+    div[class*="stActionButton"] {display: none !important;}
+    
+    div[data-testid="stBottom"] {display: none !important;}
+    iframe[title="streamlit_app"] {margin-bottom: -50px;}
+    
+    #root > div:nth-child(1) > div > div > div > div > section > div {
+        padding-top: 0rem;
+    }
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 """
 st.markdown(hide_elements, unsafe_allow_html=True)
 import smtplib
