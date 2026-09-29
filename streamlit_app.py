@@ -19,7 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",  
 )
 
-# 2. Embassy Brand CSS Styling
+# 2. Embassy Brand CSS Styling (With Enhanced UX Placeholders)
 st.markdown(  
     """  
     <style>  
@@ -34,25 +34,44 @@ st.markdown(
         background-color: #F8F9FA;  
     }  
      
-    /* Sidebar Styling */
+    /* Sidebar Background */
     [data-testid="stSidebar"] {  
         background-color: #0B2238 !important;  
         padding-top: 1.5rem;
     }  
 
-    [data-testid="stSidebar"] * {
-        color: #FFFFFF;
-    }
-
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+    /* Sidebar Headings and Labels */
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] p {
         color: #FFFFFF !important;
-        font-weight: 700 !important;
     }
 
+    /* Input Fields Styling (White Background + Dark Text) */
     [data-testid="stSidebar"] input {
         background-color: #FFFFFF !important;
-        color: #1E293B !important;
+        color: #0F172A !important;
         border-radius: 6px !important;
+        font-weight: 500 !important;
+    }
+
+    /* Fixed Placeholder Color to Light/Medium Gray for High Contrast & Clear UX */
+    [data-testid="stSidebar"] input::placeholder {
+        color: #64748B !important;
+        opacity: 1 !important;
+        font-weight: 400 !important;
+    }
+
+    /* Webkit & Mozilla vendor prefixes for cross-browser support */
+    [data-testid="stSidebar"] input::-webkit-input-placeholder {
+        color: #64748B !important;
+        opacity: 1 !important;
+    }
+    [data-testid="stSidebar"] input::-moz-placeholder {
+        color: #64748B !important;
+        opacity: 1 !important;
     }
 
     [data-testid="collapsedControl"] {
@@ -134,7 +153,7 @@ st.markdown(
     unsafe_allow_html=True,  
 )
 
-# 3. Sidebar (Authentication & Guide)
+# 3. Sidebar (Authentication & Settings)
 with st.sidebar:
     st.markdown("## Authentication")
     st.markdown(
@@ -192,7 +211,7 @@ st.markdown(
     unsafe_allow_html=True,  
 )
 
-# 5. File Upload Area (Two Columns)
+# 5. File Upload Area
 col1, col2 = st.columns(2)
 
 with col1:  
