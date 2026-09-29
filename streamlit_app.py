@@ -34,6 +34,7 @@ st.markdown(
         background-color: #F8F9FA;  
     }  
      
+    /* Sidebar Styling */
     [data-testid="stSidebar"] {  
         background-color: #0B2238 !important;  
         padding-top: 1.5rem;
@@ -69,6 +70,7 @@ st.markdown(
         color: #E2E8F0;
     }
 
+    /* Top Navy Banner */
     .header-box {  
         background-color: #0B2238;  
         color: white;  
@@ -101,13 +103,22 @@ st.markdown(
         margin-bottom: 8px;
     }
 
+    /* Red Dispatch Button */
     .stButton > button {  
+        background-color: #A61C1E !important;  
+        color: #FFFFFF !important;  
         font-weight: 600 !important;  
         font-size: 15px !important;
         border-radius: 6px !important;  
-        padding: 10px 22px !important;  
+        padding: 10px 24px !important;  
         border: none !important;  
+        box-shadow: 0 3px 6px rgba(166, 28, 30, 0.25) !important;  
         transition: all 0.2s ease !important;  
+    }  
+
+    .stButton > button:hover {  
+        background-color: #881517 !important;  
+        transform: translateY(-1px);  
     }  
 
     .custom-footer {  
@@ -123,7 +134,7 @@ st.markdown(
     unsafe_allow_html=True,  
 )
 
-# 3. Sidebar (Authentication & Options)
+# 3. Sidebar (Authentication & Guide)
 with st.sidebar:
     st.markdown("## Authentication")
     st.markdown(
@@ -133,7 +144,6 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    # Allow secrets pre-fill if configured
     default_sender = st.secrets.get("GMAIL_USER", "") if hasattr(st, "secrets") else ""
     default_pass = st.secrets.get("GMAIL_PASS", "") if hasattr(st, "secrets") else ""
 
@@ -151,7 +161,11 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("### Execution Mode")
-    dry_run = st.toggle("Dry Run (Simulation Mode)", value=False, help="Simulate PDF splitting and employee matching without sending any actual emails.")
+    dry_run = st.toggle(
+        "Dry Run (Simulation Mode)", 
+        value=False, 
+        help="Simulate PDF splitting and employee matching without sending any actual emails."
+    )
     
     st.markdown("---")
     st.markdown("### Quick Guide")
@@ -178,7 +192,7 @@ st.markdown(
     unsafe_allow_html=True,  
 )
 
-# 5. File Upload Area
+# 5. File Upload Area (Two Columns)
 col1, col2 = st.columns(2)
 
 with col1:  
@@ -186,7 +200,7 @@ with col1:
     uploaded_pdf = st.file_uploader(  
         "Upload multi-page Payroll PDF", 
         type=["pdf"],
-        help="Upload the unseparated multi-page payroll document"
+        help="Upload the comprehensive unseparated PDF payroll document"
     )
 
 with col2:  
@@ -197,21 +211,31 @@ with col2:
         help="Must contain columns for Reference Number and Email Address"
     )
 
-with st.expander("✉️ Email Subject & Template Settings"):
-    email_subject = st.text_input("Email Subject", value="Official Payroll Statement - Ref: {ref}")
+st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
+
+# 6. Email Subject & Template Settings (Visible on Main View)
+st.markdown('<div class="section-title">✉️ Email Subject & Template Settings</div>', unsafe_allow_html=True)
+email_col1, email_col2 = st.columns([1, 2])
+
+with email_col1:
+    email_subject = st.text_input(
+        "Email Subject", 
+        value="Official Payroll Statement - Ref: {ref}"
+    )
+
+with email_col2:
     email_body_template = st.text_area(
         "Email Body", 
         value="Dear {name},\n\nPlease find attached your official U.S. Embassy Cairo Payroll Statement for Reference Number: {ref}.\n\nBest regards,\nHuman Resources Department\nU.S. Embassy Cairo",
-        height=130
+        height=95
     )
 
-st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
+st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
 
-# 6. Dispatch Execution Logic
-btn_label = "🔍 Run Matching Simulation (Dry Run)" if dry_run else "🚀 Start Payroll Dispatch Process"
-btn_type = "secondary" if dry_run else "primary"
+# 7. Dispatch Button & Execution Logic
+btn_label = "🔍 Run Matching Simulation (Dry Run)" if dry_run else "Start Payroll Dispatch Process"
 
-if st.button(btn_label, type=btn_type):  
+if st.button(btn_label):  
     if not dry_run and (not sender_email or not app_password):  
         st.error("Authentication required: Please provide both Sender Email and App Password in the sidebar.")  
     elif not uploaded_pdf or not uploaded_mapping:  
@@ -228,13 +252,13 @@ if st.button(btn_label, type=btn_type):
 
             mapping_df.columns = [str(c).strip() for c in mapping_df.columns]
 
-            # Dynamic column auto-detection
+            # Dynamic column detection
             ref_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["ref", "id", "number", "رقم", "مرجعي"])]  
             email_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["email", "mail", "إيميل", "بريد"])]  
             name_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["name", "اسم", "employee"])]
 
             if not ref_col or not email_col:  
-                st.error("Failed to detect Reference ID and Email columns automatically. Please verify your file column headers.")  
+                st.error("Failed to detect Reference ID and Email columns automatically. Please verify column headers.")  
                 st.stop()
 
             ref_key = ref_col[0]  
@@ -272,7 +296,7 @@ if st.button(btn_label, type=btn_type):
                     matched_ref = None  
                     matched_data = None
 
-                    # Strict boundary matching to eliminate collisions (e.g. Ref 102 vs 1020)
+                    # Strict boundary matching to eliminate collisions
                     for ref_num, data in mapping_dict.items():  
                         pattern = r'(?<!\d)' + re.escape(ref_num) + r'(?!\d)'
                         if re.search(pattern, extracted_text):  
@@ -300,7 +324,6 @@ if st.button(btn_label, type=btn_type):
                     emp_name = matched_data["name"]
 
                     if dry_run:
-                        # Simulation Mode
                         audit_log.append({
                             "Page": index + 1,
                             "Reference Number": matched_ref,
@@ -347,7 +370,7 @@ if st.button(btn_label, type=btn_type):
                                 "Timestamp": timestamp_now,
                                 "Notes": "Delivered to SMTP queue"
                             })
-                            time.sleep(0.3)  # Anti-throttling rate protection
+                            time.sleep(0.3)
                         except Exception as send_err:
                             audit_log.append({
                                 "Page": index + 1,
@@ -366,7 +389,6 @@ if st.button(btn_label, type=btn_type):
 
             status_box.update(label="Processing Finished!", state="complete", expanded=False)
 
-            # Display Results & Summary
             if dry_run:
                 st.info("Simulation completed. Review matched pages below before live dispatch.")
             else:
@@ -397,7 +419,7 @@ if st.button(btn_label, type=btn_type):
         except Exception as e:  
             st.error(f"Execution Encountered An Error: {str(e)}")
 
-# 7. Footer
+# 8. Footer Section
 st.markdown(  
     """  
     <div class="custom-footer">  
