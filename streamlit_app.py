@@ -63,17 +63,26 @@ st.markdown("""
         color: #A0B2C6 !important;
     }
 
-    /* Style Info Box in Sidebar */
-    [data-testid="stSidebar"] [data-testid="stAlert"] {
+    /* Style Quick Guide Custom Box */
+    .quick-guide-box {
         background-color: #173753 !important;
-        color: #FFFFFF !important;
         border: 1px solid #C5A059 !important;
         border-radius: 8px !important;
+        padding: 16px !important;
+        margin-top: 10px !important;
     }
 
-    [data-testid="stSidebar"] [data-testid="stAlert"] p,
-    [data-testid="stSidebar"] [data-testid="stAlert"] li {
+    .quick-guide-box ol {
+        margin: 0 !important;
+        padding-left: 20px !important;
         color: #FFFFFF !important;
+    }
+
+    .quick-guide-box li {
+        color: #FFFFFF !important;
+        font-size: 14px !important;
+        line-height: 1.6 !important;
+        margin-bottom: 6px !important;
     }
 
     .stApp {  
@@ -192,12 +201,16 @@ with st.sidebar:
          
     st.markdown("---")  
     st.markdown("### Quick Guide")  
-    st.info("""  
-    1. Fill in your Gmail and App Password.  
-    2. Upload the Master Payroll PDF.  
-    3. Upload the Employee Mapping Sheet (Excel/CSV).  
-    4. Click Start Dispatch.  
-    """)  
+    st.markdown("""
+        <div class="quick-guide-box">
+            <ol>
+                <li>Fill in your Gmail and App Password.</li>
+                <li>Upload the Master Payroll PDF.</li>
+                <li>Upload the Employee Mapping Sheet (Excel/CSV).</li>
+                <li>Click Start Dispatch.</li>
+            </ol>
+        </div>
+    """, unsafe_allow_html=True)  
 
 col1, col2 = st.columns(2)  
 
