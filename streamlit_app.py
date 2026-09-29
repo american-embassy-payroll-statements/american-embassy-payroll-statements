@@ -24,6 +24,9 @@ st.markdown("""
     #MainMenu {visibility: hidden !important;}  
     footer {visibility: hidden !important;}  
     [data-testid="stToolbar"] {visibility: hidden !important;}  
+    [data-testid="stDecoration"] {visibility: hidden !important;}
+    [data-testid="stStatusWidget"] {visibility: hidden !important;}
+    [data-testid="stViewerBadge"] {display: none !important;}
 
     header[data-testid="stHeader"] {  
         display: none !important;  
@@ -61,28 +64,6 @@ st.markdown("""
 
     [data-testid="stSidebar"] input::placeholder {
         color: #A0B2C6 !important;
-    }
-
-    /* Style Quick Guide Custom Box */
-    .quick-guide-box {
-        background-color: #173753 !important;
-        border: 1px solid #C5A059 !important;
-        border-radius: 8px !important;
-        padding: 16px !important;
-        margin-top: 10px !important;
-    }
-
-    .quick-guide-box ol {
-        margin: 0 !important;
-        padding-left: 20px !important;
-        color: #FFFFFF !important;
-    }
-
-    .quick-guide-box li {
-        color: #FFFFFF !important;
-        font-size: 14px !important;
-        line-height: 1.6 !important;
-        margin-bottom: 6px !important;
     }
 
     .stApp {  
@@ -200,14 +181,24 @@ with st.sidebar:
     app_password = st.text_input("Google App Password (16 digits)", key="app_pass_input", type="password", placeholder="•••• •••• •••• ••••")  
          
     st.markdown("---")  
-    st.markdown("### Quick Guide")  
+    st.markdown("<h3 style='color: #FFFFFF !important; font-size: 18px;'>Quick Guide</h3>", unsafe_allow_html=True)  
     st.markdown("""
-        <div class="quick-guide-box">
-            <ol>
-                <li>Fill in your Gmail and App Password.</li>
-                <li>Upload the Master Payroll PDF.</li>
-                <li>Upload the Employee Mapping Sheet (Excel/CSV).</li>
-                <li>Click Start Dispatch.</li>
+        <div style="
+            background-color: #173753 !important;
+            border: 1px solid #C5A059 !important;
+            border-radius: 8px !important;
+            padding: 14px 16px !important;
+            margin-top: 8px !important;
+        ">
+            <ol style="
+                margin: 0 !important;
+                padding-left: 18px !important;
+                color: #FFFFFF !important;
+            ">
+                <li style="color: #FFFFFF !important; font-size: 13px !important; margin-bottom: 6px !important;">Fill in your Gmail and App Password.</li>
+                <li style="color: #FFFFFF !important; font-size: 13px !important; margin-bottom: 6px !important;">Upload the Master Payroll PDF.</li>
+                <li style="color: #FFFFFF !important; font-size: 13px !important; margin-bottom: 6px !important;">Upload the Employee Mapping Sheet (Excel/CSV).</li>
+                <li style="color: #FFFFFF !important; font-size: 13px !important; margin-bottom: 0px !important;">Click Start Dispatch.</li>
             </ol>
         </div>
     """, unsafe_allow_html=True)  
