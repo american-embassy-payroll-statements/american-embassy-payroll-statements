@@ -354,4 +354,4 @@ st.markdown("""
     <div class="custom-footer">  
        © 2026 American Embassy Payroll Statements. All Rights Reserved. Confidential & Internal Use Only.  
     </div>  
-""", unsafe_allow_html=True)س
+""", unsafe_allow_html=True)
