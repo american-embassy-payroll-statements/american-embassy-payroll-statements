@@ -1,4 +1,24 @@
+
 import streamlit as st
+# كود إخفاء الهيدر وشريط GitHub والفوتر بالكامل
+hide_elements = """
+    <style>
+    /* إخفاء الشريط العلوي والـ Fork و أزرار المطورين */
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    .stAppToolbar {display: none !important;}
+    [data-testid="stToolbar"] {display: none !important;}
+    [data-testid="stDecoration"] {display: none !important;}
+    [data-testid="stStatusWidget"] {display: none !important;}
+    
+    /* إخفاء الأيقونة الملونة وشعار Streamlit بالأسفل */
+    .viewerBadge_container__1A12q {display: none !important;}
+    div[class*="viewerBadge"] {display: none !important;}
+    div[data-testid="stHeader"] {display: none !important;}
+    </style>
+"""
+st.markdown(hide_elements, unsafe_allow_html=True)
 import smtplib
 import io
 import pandas as pd
