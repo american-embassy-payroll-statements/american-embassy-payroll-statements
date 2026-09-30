@@ -20,7 +20,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Strict Custom Styling (Preserving Your Exact Approved Design)
+# 2. Strict Custom Styling
 st.markdown("""
 <style>
     /* Force Light Theme Globally */
@@ -64,7 +64,6 @@ st.markdown("""
         margin-bottom: 25px !important;
     }
 
-    /* Direct Styling for Title Text - Overriding Streamlit Defaults */
     .main-header-title {
         color: #FFFFFF !important;
         font-size: 28px !important;
@@ -192,7 +191,10 @@ with col2:
 
 # 5. Execution & Dispatch Logic
 if dispatch_clicked:
-    if not dry_run and (not sender_email or not app_password):
+    clean_sender = sender_email.strip()
+    clean_password = app_password.strip().replace(" ", "")
+
+    if not dry_run and (not clean_sender or not clean_password):
         st.error("Authentication required: Please provide both Sender Email and App Password.")
     elif not uploaded_pdf or not uploaded_mapping:
         st.error("Missing files: Please upload both Master Payroll PDF and Employee Mapping Sheet.")
@@ -230,10 +232,9 @@ if dispatch_clicked:
 
             server = None
             if not dry_run:
-                status_box.write("Connecting to Google SMTP (TLS)...")
-                server = smtplib.SMTP("smtp.gmail.com", 587, timeout=25)
-                server.starttls()
-                server.login(sender_email.strip(), app_password.strip().replace(" ", ""))
+                status_box.write("Connecting securely to Google SMTP (SSL Port 465)...")
+                server = smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=30)
+                server.login(clean_sender, clean_password)
 
             pdf_bytes = uploaded_pdf.read()
             reader = PdfReader(io.BytesIO(pdf_bytes))
@@ -297,7 +298,7 @@ if dispatch_clicked:
                         out_pdf_bytes.seek(0)
 
                         msg = MIMEMultipart()
-                        msg["From"] = f"U.S. Embassy Cairo HR <{sender_email}>"
+                        msg["From"] = f"U.S. Embassy Cairo HR <{clean_sender}>"
                         msg["To"] = recipient_email
                         msg["Subject"] = email_subject.format(name=emp_name, ref=matched_ref)
 
