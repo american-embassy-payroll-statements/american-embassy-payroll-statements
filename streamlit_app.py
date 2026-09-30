@@ -40,40 +40,33 @@ st.markdown("""
         margin: 0 auto !important;
     }
 
-    /* Main Embassy Header */
+    /* Main Embassy Header Styling */
     .main-header {
         background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%) !important;
-        padding: 25px;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        margin-bottom: 25px;
+        padding: 25px !important;
+        border-radius: 12px !important;
+        text-align: center !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        margin-bottom: 25px !important;
     }
-    .main-header h1 {
-        color: #ffffff !important;
+
+    /* Direct Styling for Title Text - Overriding Streamlit Defaults */
+    .main-header-title {
+        color: #FFFFFF !important;
         font-size: 28px !important;
-        font-weight: 700 !important;
-        letter-spacing: 1px;
+        font-weight: 800 !important;
+        letter-spacing: 1.5px !important;
         margin: 0 !important;
         padding: 0 !important;
+        display: block !important;
     }
-    .main-header p {
+
+    .main-header-subtitle {
         color: #93c5fd !important;
         font-size: 14px !important;
         margin-top: 6px !important;
         margin-bottom: 0 !important;
-    }
-
-    /* Inputs, Labels & Descriptions */
-    label, p, span, h1, h2, h3, h4, h5, h6 {
-        color: #0f172a !important;
-    }
-
-    .stTextInput > div > div > input, .stTextArea > div > div > textarea {
-        background-color: #ffffff !important;
-        color: #0f172a !important;
-        border: 1px solid #cbd5e1 !important;
-        border-radius: 8px !important;
+        display: block !important;
     }
 
     /* Green Dispatch Button Styling */
@@ -118,10 +111,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Main Header Container
 st.markdown("""
 <div class="main-header">
-    <h1>U.S. EMBASSY CAIRO</h1>
-    <p>Automated Individual Payroll Statements Dispatch System</p>
+    <span class="main-header-title">U.S. EMBASSY CAIRO</span>
+    <span class="main-header-subtitle">Automated Individual Payroll Statements Dispatch System</span>
 </div>
 """, unsafe_allow_html=True)
 
