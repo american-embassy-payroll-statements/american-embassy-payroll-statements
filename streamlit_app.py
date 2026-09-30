@@ -3,35 +3,40 @@ import streamlit as st
 st.set_page_config(
     page_title="U.S. Embassy Cairo - Payroll System",
     page_icon="🏛️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 st.markdown("""
 <style>
-    /* Force Light Mode & Disable Dark Theme Overrides */
+    /* Force Light Theme Globally */
     :root {
         color-scheme: light !important;
     }
 
-    html, body, [data-testid="stAppViewContainer"], .stApp {
+    html, body, [data-testid="stApp"], [data-testid="stAppViewContainer"], [data-testid="stHeader"], [data-testid="stSidebar"] {
         background-color: #f8fafc !important;
-        color: #1e293b !important;
+        color: #0f172a !important;
     }
 
-    /* Container Max-Width Settings (Centered Wide Layout) */
+    /* Force Light Backgrounds on Inputs, Textareas, & Containers */
+    input, textarea, select, div[role="listbox"], div[data-baseweb="select"] {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+    }
+
+    /* Center Page Container & Fix Max Width */
     .block-container {
-        max-width: 1200px !important;
+        max-width: 1100px !important;
         padding-top: 2rem !important;
         padding-bottom: 2rem !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
         margin: 0 auto !important;
     }
 
-    /* Main Header Styling */
+    /* Main Embassy Header */
     .main-header {
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-        color: #ffffff;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%) !important;
+        color: #ffffff !important;
         padding: 24px;
         border-radius: 12px;
         text-align: center;
@@ -52,12 +57,11 @@ st.markdown("""
         margin-bottom: 0;
     }
 
-    /* Card Panels Styling */
-    div[data-testid="stVerticalBlock"] > div {
-        border-radius: 10px;
+    /* Inputs, Labels & Descriptions */
+    label, p, span, h1, h2, h3, h4, h5, h6 {
+        color: #0f172a !important;
     }
 
-    /* Input Fields & Text Areas */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {
         background-color: #ffffff !important;
         color: #0f172a !important;
@@ -65,7 +69,7 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
-    /* Primary Dispatch Button */
+    /* Dispatch Button Styling */
     .stButton > button {
         width: 100%;
         background-color: #1e3a8a !important;
@@ -83,8 +87,11 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25) !important;
         transform: translateY(-1px);
     }
+    .stButton > button * {
+        color: #ffffff !important;
+    }
 
-    /* File Uploaders */
+    /* File Uploader Light Force */
     div[data-testid="stFileUploader"] {
         background-color: #ffffff !important;
         border: 1px dashed #94a3b8 !important;
@@ -92,7 +99,7 @@ st.markdown("""
         padding: 10px !important;
     }
 
-    /* Footer Styling */
+    /* Custom Footer */
     .custom-footer {
         text-align: center;
         color: #64748b !important;
