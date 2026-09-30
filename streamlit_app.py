@@ -19,6 +19,13 @@ st.markdown("""
         color: #0f172a !important;
     }
 
+    /* Hide Streamlit Header, Main Menu, Footer, and Fork Button */
+    #MainMenu {visibility: hidden !important;}
+    header {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    [data-testid="stHeader"] {display: none !important;}
+    a[href*="github.com"], a[href*="fork"] {display: none !important;}
+
     /* Force Light Backgrounds on Inputs, Textareas, & Containers */
     input, textarea, select, div[role="listbox"], div[data-baseweb="select"] {
         background-color: #ffffff !important;
@@ -36,8 +43,7 @@ st.markdown("""
     /* Main Embassy Header */
     .main-header {
         background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%) !important;
-        color: #ffffff !important;
-        padding: 24px;
+        padding: 25px;
         border-radius: 12px;
         text-align: center;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -45,16 +51,17 @@ st.markdown("""
     }
     .main-header h1 {
         color: #ffffff !important;
-        font-size: 26px;
-        font-weight: 700;
+        font-size: 28px !important;
+        font-weight: 700 !important;
         letter-spacing: 1px;
-        margin: 0;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     .main-header p {
         color: #93c5fd !important;
-        font-size: 14px;
-        margin-top: 6px;
-        margin-bottom: 0;
+        font-size: 14px !important;
+        margin-top: 6px !important;
+        margin-bottom: 0 !important;
     }
 
     /* Inputs, Labels & Descriptions */
@@ -69,10 +76,10 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
-    /* Dispatch Button Styling */
-    .stButton > button {
-        width: 100%;
-        background-color: #1e3a8a !important;
+    /* Green Dispatch Button Styling */
+    div.stButton > button {
+        width: 100% !important;
+        background-color: #16a34a !important;
         color: #ffffff !important;
         font-weight: 600 !important;
         font-size: 16px !important;
@@ -80,14 +87,14 @@ st.markdown("""
         border-radius: 8px !important;
         border: none !important;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-        transition: all 0.2s ease;
+        transition: all 0.2s ease !important;
     }
-    .stButton > button:hover {
-        background-color: #1e40af !important;
-        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25) !important;
+    div.stButton > button:hover {
+        background-color: #15803d !important;
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3) !important;
         transform: translateY(-1px);
     }
-    .stButton > button * {
+    div.stButton > button * {
         color: #ffffff !important;
     }
 
