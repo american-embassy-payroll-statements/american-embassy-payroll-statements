@@ -178,11 +178,11 @@ with col2:
     st.subheader("Email Subject & Template Settings")
     email_subject = st.text_input(
         "Email Subject",
-        value="Official Payroll Statement - Ref: {ref}"
+        value="Official Payroll Statement - Emplid: {emplid}"
     )
     email_body_template = st.text_area(
         "Email Body Template",
-        value="Dear {name},\n\nPlease find attached your official U.S. Embassy Cairo Payroll Statement for Reference Number: {ref}.\n\nBest regards,\nHuman Resources Department\nU.S. Embassy Cairo",
+        value="Dear {name},\n\nPlease find attached your official U.S. Embassy Cairo Payroll Statement for Emplid: {emplid}.\n\nBest regards,\nLocal Guard Force Department\nU.S. Embassy Cairo",
         height=150
     )
 
@@ -210,25 +210,26 @@ if dispatch_clicked:
 
             mapping_df.columns = [str(c).strip() for c in mapping_df.columns]
 
-            ref_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["ref", "id", "number"])]
+            # Priority search terms for Emplid
+            emplid_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["emplid", "empl", "id", "ref", "number"])]
             email_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["email", "mail"])]
             name_col = [c for c in mapping_df.columns if any(k in c.lower() for k in ["name", "employee"])]
 
-            if not ref_col or not email_col:
-                st.error("Failed to detect Reference ID and Email columns automatically. Please verify column headers in mapping file.")
+            if not emplid_col or not email_col:
+                st.error("Failed to detect Emplid and Email columns automatically. Please verify column headers in mapping file.")
                 st.stop()
 
-            ref_key = ref_col[0]
+            emplid_key = emplid_col[0]
             email_key = email_col[0]
             name_key = name_col[0] if name_col else None
 
             mapping_dict = {}
             for _, row in mapping_df.iterrows():
-                ref_val = str(row[ref_key]).strip()
+                emplid_val = str(row[emplid_key]).strip()
                 email_val = str(row[email_key]).strip()
                 emp_name = str(row[name_key]).strip() if name_key and pd.notna(row[name_key]) else "Colleague"
-                if ref_val and ref_val.lower() != 'nan':
-                    mapping_dict[ref_val] = {"email": email_val, "name": emp_name}
+                if emplid_val and emplid_val.lower() != 'nan':
+                    mapping_dict[emplid_val] = {"email": email_val, "name": emp_name}
 
             server = None
             if not dry_run:
@@ -249,28 +250,28 @@ if dispatch_clicked:
 
                 for index, page in enumerate(pdf.pages):
                     extracted_text = page.extract_text() or ""
-                    matched_ref = None
+                    matched_emplid = None
                     matched_data = None
 
-                    for ref_num, data in mapping_dict.items():
-                        pattern = r'(?<!\d)' + re.escape(ref_num) + r'(?!\d)'
+                    for emplid_num, data in mapping_dict.items():
+                        pattern = r'(?<!\d)' + re.escape(emplid_num) + r'(?!\d)'
                         if re.search(pattern, extracted_text):
-                            matched_ref = ref_num
+                            matched_emplid = emplid_num
                             matched_data = data
                             break
 
                     timestamp_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-                    if not matched_ref or not matched_data["email"]:
+                    if not matched_emplid or not matched_data["email"]:
                         unmatched_count += 1
                         audit_log.append({
                             "Page": index + 1,
-                            "Reference Number": "N/A",
+                            "Emplid": "N/A",
                             "Employee Name": "N/A",
                             "Recipient Email": "N/A",
                             "Status": "Unmatched",
                             "Timestamp": timestamp_now,
-                            "Notes": "Reference ID not found in page text"
+                            "Notes": "Emplid not found in page text"
                         })
                         progress_bar.progress((index + 1) / total_pages)
                         continue
@@ -281,7 +282,7 @@ if dispatch_clicked:
                     if dry_run:
                         audit_log.append({
                             "Page": index + 1,
-                            "Reference Number": matched_ref,
+                            "Emplid": matched_emplid,
                             "Employee Name": emp_name,
                             "Recipient Email": recipient_email,
                             "Status": "Simulated Matched",
@@ -298,18 +299,18 @@ if dispatch_clicked:
                         out_pdf_bytes.seek(0)
 
                         msg = MIMEMultipart()
-                        msg["From"] = f"U.S. Embassy Cairo HR <{clean_sender}>"
+                        msg["From"] = f"U.S. Embassy Cairo Local Guard Force Department <{clean_sender}>"
                         msg["To"] = recipient_email
-                        msg["Subject"] = email_subject.format(name=emp_name, ref=matched_ref)
+                        msg["Subject"] = email_subject.format(name=emp_name, emplid=matched_emplid, ref=matched_emplid)
 
-                        body_content = email_body_template.format(name=emp_name, ref=matched_ref)
+                        body_content = email_body_template.format(name=emp_name, emplid=matched_emplid, ref=matched_emplid)
                         msg.attach(MIMEText(body_content, "plain"))
 
                         attachment = MIMEApplication(
                             out_pdf_bytes.read(),
-                            Name=f"Payroll_Statement_{matched_ref}.pdf",
+                            Name=f"Payroll_Statement_{matched_emplid}.pdf",
                         )
-                        attachment["Content-Disposition"] = f'attachment; filename="Payroll_Statement_{matched_ref}.pdf"'
+                        attachment["Content-Disposition"] = f'attachment; filename="Payroll_Statement_{matched_emplid}.pdf"'
                         msg.attach(attachment)
 
                         try:
@@ -317,7 +318,7 @@ if dispatch_clicked:
                             sent_count += 1
                             audit_log.append({
                                 "Page": index + 1,
-                                "Reference Number": matched_ref,
+                                "Emplid": matched_emplid,
                                 "Employee Name": emp_name,
                                 "Recipient Email": recipient_email,
                                 "Status": "Success",
@@ -328,7 +329,7 @@ if dispatch_clicked:
                         except Exception as send_err:
                             audit_log.append({
                                 "Page": index + 1,
-                                "Reference Number": matched_ref,
+                                "Emplid": matched_emplid,
                                 "Employee Name": emp_name,
                                 "Recipient Email": recipient_email,
                                 "Status": "Failed",
